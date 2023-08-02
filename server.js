@@ -1,22 +1,28 @@
 const http = require('http'); // 서버를 만들기 위해 Node에 내장되어 있는 기본 모듈 호출
+const url = require('url');
+const fs = require('fs');
+
 http.createServer((request, response) => { // 서버를 만드는 메소드
-    console.log('Server Started!');
-    return request
-    .on('error', (err) => { // 요청에 에러가 있을때
-        console.error(err);
-    })
-    .on('data', (data) => { // 요청에 데이터가 있을때
-        console.log(data);
-    })
-    .on('end', () => { // 요청의 데이터가 모두 들어 왔을때
-        response.on('error', (err) => { // 응답에 대한 에러가 있을때
-            console.error(err);
-        });
-        response.statusCode = 200; // 성공 상태코드
-        response.setHeader('Content-type','text/plain'); // 헤더 설정
-        response.write('Hello World!'); // 바디에 정보 탑재
-        response.end('the end!'); // 정보 탑재 후 브라우저로 전송
-    });
+    const path = url.parse(request.url, true).pathname; // url에서 path 추출
+    if(request.method == 'GET') { // GET 요청일때
+        if(path === '/about') { // 주소가 '/about' 일때
+            response.writeHead(200, {'Content-type':'text/html'}); // 헤더 설정
+            // __dirname는 현재 프로젝트의 경로
+            fs.readFile(__dirname + '/frontend/views/about.html', (err, data) => { // 파일 읽는 메소드
+                if(err) return console.error(err); // 에러 발생시 에러 기록하고 리턴
+                response.end(data,'utf-8'); // 브라우저로 전송
+            });
+        }else if(path === '/'){
+            response.writeHead(200, {'Content-type':'text/html'});
+            fs.readFile(__dirname + '/frontend/views/main.html', (err, data) => {
+                if(err) return console.error(err);
+                response.end(data,'utf-8');
+            });
+        }else {
+            response.statusCode = 404; // 404 상태코드
+            response.end('404 !!!');
+        }
+    }
 }).listen(8080); // 8080 포트에 연결 (default는 80)
 // 서버에 올릴때는 주로 80포트로 올리는걸 추천
 
