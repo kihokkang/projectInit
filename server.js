@@ -1,35 +1,17 @@
-const http = require('http'); // 서버를 만들기 위해 Node에 내장되어 있는 기본 모듈 호출
-const url = require('url');
-const fs = require('fs');
+const express = require('express'); // express 모듈 등록
+const path = require('path');
+const app =  express(); // express 객체 만들기
+const basePath = path.join(__dirname, '/frontend/views');
 
-http.createServer((request, response) => { // 서버를 만드는 메소드
-    const path = url.parse(request.url, true).pathname; // url에서 path 추출
-    if(request.method == 'GET') { // GET 요청일때
-        if(path === '/about') { // 주소가 '/about' 일때
-            response.writeHead(200, {'Content-type':'text/html'}); // 헤더 설정
-            // __dirname는 현재 프로젝트의 경로
-            fs.readFile(__dirname + '/frontend/views/about.html', (err, data) => { // 파일 읽는 메소드
-                if(err) return console.error(err); // 에러 발생시 에러 기록하고 리턴
-                response.end(data,'utf-8'); // 브라우저로 전송
-            });
-        }else if(path === '/'){
-            response.writeHead(200, {'Content-type':'text/html'});
-            fs.readFile(__dirname + '/frontend/views/main.html', (err, data) => {
-                if(err) return console.error(err);
-                response.end(data,'utf-8');
-            });
-        }else {
-            response.statusCode = 404; // 404 상태코드
-            response.end('404 !!!');
-        }
-    }
-}).listen(8080); // 8080 포트에 연결 (default는 80)
-// 서버에 올릴때는 주로 80포트로 올리는걸 추천
+// 'app.use' : Express에서 미들웨어를 추가하는 메서드
+app.use(express.static(path.join(__dirname, 'html'))); // Express를 사용하여 정적 파일(HTML, CSS, JS 파일, 폰트 등) 서버를 설정
 
-/**
- * 1. request -> 서버 처리 -> response 
- * 2. request와 response 에는 header와 body로 구성
- * 3. header : request와 response에 대한 정보(종류, 크기, 캐시 여부)를 담는다
- * 4. body : 우리가 원하는 실질적인 데이터를 담는다
- * 5. statusCode에 대한 정리 필요
- */
+app.get('/',(req, res) => { // '/' 로 접속시 처리
+    res.sendFile(path.join(basePath, 'main.html')); // path.join 메소드를 사용하면 디렉토리 주소 구분자가 /인지 \인지 상관없이 환경에 맞게 주소를 완성해줌
+});
+app.get('/about',(req, res) => { // '/about' 로 접속시 처리
+    res.sendFile(path.join(basePath, 'about.html'));
+});
+app.listen(8080, () => {  // 8080 포트에 연결
+    console.log('Express App on port 8080');
+});

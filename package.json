@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/kihokkang/projectInit/issues"
   },
-  "homepage": "https://github.com/kihokkang/projectInit#readme"
+  "homepage": "https://github.com/kihokkang/projectInit#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
