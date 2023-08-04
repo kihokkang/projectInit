@@ -1,6 +1,13 @@
 const express = require('express'); // express 모듈 등록
+const path = require('path');
 const app =  express(); // express 객체 만들기
 const route = require('./frontend/router/route.js'); // route.js에서 module.exports로 export했던 router을 연결함
+const basePath = path.join(__dirname, '/frontend/views');
+
+app.set('view engine', 'pug'); // view 엔진을 pug로 설정하기
+app.set('views', path.join(basePath)); // pug 파일들이 있는 폴더를 설정하는 부분
+// 'app.use' : Express에서 미들웨어를 추가하는 메서드
+app.use(express.static(path.join(basePath))); // Express를 사용하여 정적 파일(HTML, CSS, JS 파일, 폰트 등) 서버를 설정
 
 app.use((req, res, next) => {
     console.log('Hello!');
@@ -15,7 +22,7 @@ app.use((req, res, next) => {
 app.use('/', route);
 app.use((req, res, next) => {
     res.status(404).send('일치하는 주소가 없습니다.');
-});
+}); 
 
 /**
  * next(err)로 넘겨줬던 에러가 최종적으로 도착하는 부분
