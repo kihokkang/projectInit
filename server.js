@@ -3,11 +3,16 @@ const path = require('path');
 const app =  express(); // express 객체 만들기
 const route = require('./frontend/router/route.js'); // route.js에서 module.exports로 export했던 router을 연결함
 const basePath = path.join(__dirname, '/frontend/views');
+const database = require('./db.js');
 
 app.set('view engine', 'pug'); // view 엔진을 pug로 설정하기
 app.set('views', path.join(basePath)); // pug 파일들이 있는 폴더를 설정하는 부분
+database(); // 데이터 베이스 실행
 // 'app.use' : Express에서 미들웨어를 추가하는 메서드
 app.use(express.static(path.join(basePath))); // Express를 사용하여 정적 파일(HTML, CSS, JS 파일, 폰트 등) 서버를 설정
+
+// 요청 본문 파싱을 위한 미들웨어 추가
+app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
     console.log('Hello!');

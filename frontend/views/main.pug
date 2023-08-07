@@ -1,5 +1,29 @@
-extends ./layout.pug 
-block title 
-    title Main
-block content 
-    div Main Page
+extends ./layout.pug
+
+block title
+  title Main
+
+block content
+  h1 Add User
+  form(action="/addUser", method="post")
+    label(for="username") Username : 
+    input(type="text", id="username", name="name")
+    br
+
+    label(for="phone") Phone Number : 
+    input(type="text", id="phone", name="phone")
+    br
+
+    label(for="age") Age : 
+    input(type="number", id="age", name="age")
+    br
+
+    button(type="submit") Add User
+
+  h1 Find User
+  form#findForm(action="/findUser", method="get")
+    label(for="findUsername") Find Username : 
+    input(type="text", id="findUsername", name="findName")
+    br
+
+    button(type="submit") Find User
