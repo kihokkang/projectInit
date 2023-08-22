@@ -4,6 +4,9 @@ const app =  express(); // express 객체 만들기
 const route = require('./frontend/router/route.js'); // route.js에서 module.exports로 export했던 router을 연결함
 const basePath = path.join(__dirname, '/frontend/views');
 const database = require('./db.js');
+const methodOverride = require('method-override');
+const { swaggerUi, specs } = require("./swagger/swagger")
+// const bodyParser = require('body-parser');
 
 app.set('view engine', 'pug'); // view 엔진을 pug로 설정하기
 app.set('views', path.join(basePath)); // pug 파일들이 있는 폴더를 설정하는 부분
@@ -11,8 +14,12 @@ database(); // 데이터 베이스 실행
 // 'app.use' : Express에서 미들웨어를 추가하는 메서드
 app.use(express.static(path.join(basePath))); // Express를 사용하여 정적 파일(HTML, CSS, JS 파일, 폰트 등) 서버를 설정
 
+app.use(methodOverride()); // PUT, DELETE를 지원 안하는 클라이언트를 위해 미들웨어 추가
+// app.use(bodyParser.json()); // body 데이터를 json형식으로 받음
+// app.use(bodyParser.urlencoded({ extended: true })); // qs모듈로 쿼리 스트링 파싱(express 4.16 버전으로 해당 기능이 express 기본내장됨)
 // 요청 본문 파싱을 위한 미들웨어 추가
 app.use(express.urlencoded({ extended: true }));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
 
 app.use((req, res, next) => {
     console.log('Hello!');
